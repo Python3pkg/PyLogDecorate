@@ -1,8 +1,8 @@
-from log import LogCall, LogClass
+from .log import LogCall, LogClass
 
 @LogCall()
 def test():
-    print "x"
+    print("x")
 
 @LogClass({"subdecorate": True})
 class test1(object):

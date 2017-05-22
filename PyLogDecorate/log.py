@@ -14,7 +14,7 @@ def keyIsTrue(dic, key):
     if not dic:
         return False
     
-    if dic.has_key(key) and dic[key]==True:
+    if key in dic and dic[key]==True:
         return True
     
     return False
@@ -23,7 +23,7 @@ def haskey(dic, key):
     if not dic:
         return False
     
-    return dic.has_key(key)
+    return key in dic
 
 def toStr(obj):
     try: 
@@ -75,7 +75,7 @@ class LogCallBase(object):
                 if classfn: self.trace_in(logger, args[0])
                 result = fn(*args)
                 if classfn: self.trace_out(logger, args[0])
-            except Exception, e:
+            except Exception as e:
                 result = "CRASHED"
                 err = e
         
@@ -85,7 +85,7 @@ class LogCallBase(object):
         
                     self.log_f(logger, frame, fn, args, {}, result)
         
-                except Exception, e:
+                except Exception as e:
                     # See http://docs.python.org/library/inspect.html#the-interpreter-stack
                     del frame
                     err= e
@@ -146,7 +146,7 @@ class LogCall(LogCallBase):
         # Format the args and kw args as a comma-separated list
         arglist = ', '.join(map(toShortStr, args))
         if kw:
-            arglist += ', ' + ', '.join(map(lambda k: '%s=%s' % (toStr(k), toShortStr(kw[k])), kw.keys()))
+            arglist += ', ' + ', '.join(['%s=%s' % (toStr(k), toShortStr(kw[k])) for k in list(kw.keys())])
 
         logger.debug("%(file)s %(line)d: %(func)s(%(args)s) -> %(ret)s" % ( 
                         {'file': os.path.relpath(frame.f_code.co_filename),
@@ -204,7 +204,7 @@ class LogClass(object):
                 instance.logger= logging.getLogger(instance.__class__.__module__+"."+ \
                                                        instance.__class__.__name__)
             # In case we specific level set level for class.
-            if self.args and self.args.has_key("level"):
+            if self.args and "level" in self.args:
                 instance.logger.setLevel(self.args["level"])
 
             if self.original_init:
